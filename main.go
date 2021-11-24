@@ -230,7 +230,7 @@ func run(options structs.AppOptions, r1ReaderOptions, r2ReaderOptions structs.Fi
 		return
 	}
 
-	fmt.Printf("\nTransforming R1-R2 to R1-R2-I...\n\n")
+	fmt.Printf("\nBeginning transformation...\n\n")
 
 	r1Input := chan_io.NewIOStringLines(options.BlockSize)
 	r2Input := chan_io.NewIOStringLines(options.BlockSize)

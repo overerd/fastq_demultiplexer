@@ -27,20 +27,20 @@ func TransformData(
 
 	transformer := transformStrategy.BuildTransformer()
 
-	shardsChan, shardsDone := fastq.ReadR1R2Data(options, r1Input, r2Input)
+	readPairsChan, readPairsDone := fastq.ReadR1R2Data(options, r1Input, r2Input)
 
 	go func() {
 		for {
 			select {
-			case r := <-shardsDone:
-				for len(shardsChan) > 0 {
-					transformer(barcodes, barcodeFiles, <-shardsChan)
+			case r := <-readPairsDone:
+				for len(readPairsChan) > 0 {
+					transformer(barcodes, barcodeFiles, <-readPairsChan)
 				}
 
 				done <- r
 
 				return
-			case shard := <-shardsChan:
+			case shard := <-readPairsChan:
 				transformer(barcodes, barcodeFiles, shard)
 			}
 		}
