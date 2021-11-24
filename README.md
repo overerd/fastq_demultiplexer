@@ -2,11 +2,15 @@
 
 Converts fastq single cell data from MGI (10x converted library) to Illumina compatible format.
 
+---
+
 ## Installation
 
 ```shell
 go install github.com/overerd/fastq_demultiplexer@latest
 ```
+
+---
 
 ### Arguments
 
@@ -26,6 +30,8 @@ go install github.com/overerd/fastq_demultiplexer@latest
 * `--compression-level` output gzip compression level if applicable [1, 9] (default: 1).
 * `--debug` enables debug messages.
 
+---
+
 #### Filename template:
 
 It uses golang template syntax `{{.Variable}}`.
@@ -34,10 +40,12 @@ Template `{{.SampleName}}_S{{.SampleNumber}}_L00{{.LaneNumber}}_{{.ReadType}}_00
 
 ##### Supported template variables:
 
-* `{{.SampleName}}` - index name from barcode csv-file
+* `{{.SampleName}}` - index name from barcodes csv-file
 * `{{.SampleNumber}}` - index number
-* `{{.LaneNumber}}` - --lane-number value
+* `{{.LaneNumber}}` - `--lane-number value`
 * `{{.ReadType}}` - read type (could be R1, R2 and I1)
+
+---
 
 ### Example
 
