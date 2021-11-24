@@ -26,16 +26,29 @@ go install github.com/overerd/fastq_demultiplexer@latest
 * `--compression-level` output gzip compression level if applicable [1, 9] (default: 1).
 * `--debug` enables debug messages.
 
+#### Filename template:
+
+It uses golang template syntax `{{.Variable}}`.
+
+Template `{{.SampleName}}_S{{.SampleNumber}}_L00{{.LaneNumber}}_{{.ReadType}}_001.fastq.gz` would result in filenames like `H2_S1_L001_R2_001.fastq.gz`.
+
+##### Supported template variables:
+
+* `{{.SampleName}}` - index name from barcode csv-file
+* `{{.SampleNumber}}` - index number
+* `{{.LaneNumber}}` - --lane-number value
+* `{{.ReadType}}` - read type (could be R1, R2 and I1)
+
 ### Example
 
 ```shell
 fastq_demultiplexer \
-    -1 test/data2/v350013347_run65_L01_read_1.fq.gz \
-    -2 test/data2/v350013347_run65_L01_read_2.fq.gz \
-    -c test/data/Single_Index_Kit_T_Set_A.csv \
+    -1 v350013347_run65_L01_read_1.fq.gz \
+    -2 v350013347_run65_L01_read_2.fq.gz \
+    -c Single_Index_Kit_T_Set_A.csv \
     --lane-number 1 \
     --block-size 1000 \
-    --targets-file test/data/targets.txt \
+    --targets-file targets.txt \
     --transform-strategy 10x_no_index \
     --filename-template {{.SampleName}}_S{{.SampleNumber}}_L00{{.LaneNumber}}_{{.ReadType}}_001.fastq.gz \
     -o output/ \
