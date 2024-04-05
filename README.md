@@ -15,7 +15,7 @@ go install github.com/overerd/fastq_demultiplexer@latest
 ### Arguments
 
 #### Required:
-* `-1|--r1` and `-2|--r2` expect a R1-R2 pair of fastq files.
+* `-1|--r1` and `-2|--r2` expect an R1-R2 pair of fastq files.
 * `-c|--csv-file` table with barcodes for each index.
 * `-o|--output-directory` output directory (would contain subdirectories of demultiplexed samples).
 

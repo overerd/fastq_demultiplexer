@@ -40,8 +40,8 @@ func TransformData(
 				done <- r
 
 				return
-			case shard := <-readPairsChan:
-				transformer(barcodes, barcodeFiles, shard)
+			case block := <-readPairsChan:
+				transformer(barcodes, barcodeFiles, block)
 			}
 		}
 	}()

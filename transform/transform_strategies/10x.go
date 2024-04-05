@@ -9,14 +9,14 @@ import (
 type BaseTransformStrategy struct{}
 
 func (s *BaseTransformStrategy) GetSchema() []string { return []string{"R1", "R2", "I1"} }
-func (s *BaseTransformStrategy) BuildTransformer() func(barcodes *barcodes.BarcodeMap, barcodeFiles *barcodes.BarcodeFiles, shard *fastq.ReadPair) {
+func (s *BaseTransformStrategy) BuildTransformer() func(barcodes *barcodes.BarcodeMap, barcodeFiles *barcodes.BarcodeFiles, block *fastq.ReadPair) {
 	return func(
 		barcodes *barcodes.BarcodeMap,
 		barcodeFiles *barcodes.BarcodeFiles,
-		shard *fastq.ReadPair,
+		block *fastq.ReadPair,
 	) {
-		r1Id := shard.R1.Id[:len(shard.R1.Id)-2] // trim last two characters of orientation part
-		r2Id := shard.R2.Id[:len(shard.R2.Id)-2]
+		r1Id := block.R1.Id[:len(block.R1.Id)-2] // trim last two characters of orientation part
+		r2Id := block.R2.Id[:len(block.R2.Id)-2]
 
 		if r1Id != r2Id {
 			panic(
@@ -30,37 +30,37 @@ func (s *BaseTransformStrategy) BuildTransformer() func(barcodes *barcodes.Barco
 			return
 		}
 
-		barcodeSeq := shard.R1.Seq[len(shard.R1.Seq)-8:]
+		barcodeSeq := block.R1.Seq[len(block.R1.Seq)-8:]
 		reversedBarcodeSeq := ReverseSequence(barcodeSeq)
 
 		if barcodeId, ok := (*barcodes)[reversedBarcodeSeq]; ok {
 			if chanIO, ok := (*barcodeFiles)[barcodeId]; ok {
 				i1Id := fmt.Sprintf("%s 2:N:0:%s", r2Id, barcodeSeq)
-				r1Id = fmt.Sprintf("%s 1:N:0:%s", shard.R1.Id, barcodeSeq)
-				r2Id = fmt.Sprintf("%s 2:N:0:%s", shard.R2.Id, barcodeSeq)
+				r1Id = fmt.Sprintf("%s 1:N:0:%s", block.R1.Id, barcodeSeq)
+				r2Id = fmt.Sprintf("%s 2:N:0:%s", block.R2.Id, barcodeSeq)
 
-				r1Seq := shard.R1.Seq[:28]
-				r1Quality := shard.R1.Quality[:28]
+				r1Seq := block.R1.Seq[:28]
+				r1Quality := block.R1.Quality[:28]
 
-				r2Len := len(shard.R2.Seq) - 9
+				r2Len := len(block.R2.Seq) - 9
 
 				if r2Len <= 0 {
-					r2Len = len(shard.R2.Seq)
+					r2Len = len(block.R2.Seq)
 				}
 
-				r2Seq := shard.R2.Seq[:r2Len]
-				r2Quality := shard.R2.Quality[:r2Len]
+				r2Seq := block.R2.Seq[:r2Len]
+				r2Quality := block.R2.Quality[:r2Len]
 
 				i1Quality := r1Quality[len(r1Quality)-8:]
 
 				chanIO.Files["R1"].ChanIO.Lines <- fmt.Sprintf(
 					"%s\n%s\n%s\n%s\n",
-					r1Id, r1Seq, shard.R1.Sup, r1Quality,
+					r1Id, r1Seq, block.R1.Sup, r1Quality,
 				)
 
 				chanIO.Files["R2"].ChanIO.Lines <- fmt.Sprintf(
 					"%s\n%s\n%s\n%s\n",
-					r2Id, r2Seq, shard.R2.Sup, r2Quality,
+					r2Id, r2Seq, block.R2.Sup, r2Quality,
 				)
 
 				chanIO.Files["I1"].ChanIO.Lines <- fmt.Sprintf(

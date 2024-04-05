@@ -14,7 +14,7 @@ var supportedStrategiesList []string
 
 type TransformStrategy interface {
 	GetSchema() []string
-	BuildTransformer() func(barcodes *barcodes.BarcodeMap, barcodeFiles *barcodes.BarcodeFiles, shard *fastq.ReadPair)
+	BuildTransformer() func(barcodes *barcodes.BarcodeMap, barcodeFiles *barcodes.BarcodeFiles, block *fastq.ReadPair)
 }
 
 func ReverseSequence(seq string) string {

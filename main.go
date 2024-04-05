@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version = "0.0.3"
+	version = "0.1.0"
 	build   = "src"
 )
 
@@ -118,13 +118,13 @@ func setup() (options structs.AppOptions, r1ReaderOptions, r2ReaderOptions struc
 	bufferSize := parser.Int("", "buffer-size", &argparse.Options{
 		Required: false,
 		Default:  10 * 1024 * 1024,
-		Help:     "path to output directory",
+		Help:     "I/O buffer size",
 	})
 
 	blockSize := parser.Int("", "block-size", &argparse.Options{
 		Required: false,
 		Default:  4 * 2 * 1024,
-		Help:     "path to output directory",
+		Help:     "I/O block size",
 	})
 
 	compressionLevel := parser.Int("", "compression-level", &argparse.Options{
@@ -138,13 +138,6 @@ func setup() (options structs.AppOptions, r1ReaderOptions, r2ReaderOptions struc
 	})
 
 	invokeError(parser.Parse(os.Args))
-
-	if options.Debug {
-		fmt.Printf("%s\n\n", time.Now().String())
-		fmt.Println(fmt.Sprintf("%+v", options))
-		fmt.Println(fmt.Sprintf("%+v", r1ReaderOptions))
-		fmt.Println(fmt.Sprintf("%+v", r2ReaderOptions))
-	}
 
 	err = misc.InitMisc()
 
@@ -172,6 +165,13 @@ func setup() (options structs.AppOptions, r1ReaderOptions, r2ReaderOptions struc
 		BlockSize:  uint(*blockSize),
 
 		Debug: *debugFlag,
+	}
+
+	if options.Debug {
+		fmt.Printf("%s\n\n", time.Now().String())
+		fmt.Println(fmt.Sprintf("%+v", options))
+		fmt.Println(fmt.Sprintf("%+v", r1ReaderOptions))
+		fmt.Println(fmt.Sprintf("%+v", r2ReaderOptions))
 	}
 
 	r1FileName, err := misc.ExtractFilename(options.R1Path)
